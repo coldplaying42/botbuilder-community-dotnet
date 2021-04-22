@@ -1,0 +1,46 @@
+﻿{
+    "$schema": "https://schemas.botframework.com/schemas/component/v1.0/component.schema",
+    "$role": "implements(Microsoft.IRecognizer)",
+    "title": "Adaptive Fuzzy Recognizer",
+    "description": "Recognizer which does fuzzy matching",
+    "type": "object",
+    "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "title": "Id",
+      "description": "Optional unique id using with RecognizerSet.  Other recognizers should return 'DeferToRecognizer_{Id}' intent when cross training data for this recognizer."
+    },
+    "IgnoreNonAlphanumeric": {
+      "$ref": "schema:#/definitions/booleanExpression",
+      "title": "IgnoreNonAlphanumeric",
+      "description": "Boolean expression which determines whether to ignore alpha",
+      "default": true
+    },
+    "IgnoreCase": {
+      "$ref": "schema:#/definitions/booleanExpression",
+      "title": "IgnoreCase",
+      "description": "Boolean expression which determines whether to ignore cases",
+      "default": true
+    },
+    "Threshold": {
+      "$ref": "schema:#/definitions/NumberExpression",
+      "title": "Threshold",
+      "description": "Number expression which determines the threshold",
+    },
+    "choices": {
+      "$ref": "schema:#/definitions/arrayExpression",
+      "title": "choices",
+      "description": "Runtime defined choices",
+      "type": "array",
+      "items": {
+        "title": "choice",
+        "description": "Lists of choices.",
+        "type": "string"
+        }
+      }
+  },
+    "required": [
+        "choices"
+    ]
+}
