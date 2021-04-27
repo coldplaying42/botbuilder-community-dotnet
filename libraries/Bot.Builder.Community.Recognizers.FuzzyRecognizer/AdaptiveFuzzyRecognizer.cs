@@ -13,7 +13,7 @@ using Microsoft.Bot.Builder.TraceExtensions;
 
 namespace Bot.Builder.Community.Recognizers.Fuzzy
 {
-    class AdaptiveFuzzyRecognizer : Recognizer
+    public class AdaptiveFuzzyRecognizer : Recognizer
     {
         /// <summary>
         /// Class identifier.
@@ -28,7 +28,7 @@ namespace Bot.Builder.Community.Recognizers.Fuzzy
         /// Threshold
         /// </value>
         [JsonProperty("Threshold")]
-        public NumberExpression Threshold { get; set; }
+        public double Threshold { get; set; }
 
         /// <summary>
         /// Gets or sets the  to IgnoreNonAlphanumeric
@@ -37,7 +37,7 @@ namespace Bot.Builder.Community.Recognizers.Fuzzy
         /// IgnoreNonAlphanumeric
         /// </value>
         [JsonProperty("IgnoreNonAlphanumeric")]
-        public BoolExpression IgnoreNonAlphanumeric { get; set; }
+        public bool IgnoreNonAlphanumeric { get; set; }
 
         /// <summary>
         /// Gets or sets the  to IgnoreCase
@@ -46,7 +46,7 @@ namespace Bot.Builder.Community.Recognizers.Fuzzy
         /// IgnoreCase
         /// </value>
         [JsonProperty("IgnoreCase")]
-        public BoolExpression IgnoreCase { get; set; } = true;
+        public bool IgnoreCase { get; set; } = true;
 
         /// <summary>
         /// Gets or sets the  to choices
@@ -54,8 +54,8 @@ namespace Bot.Builder.Community.Recognizers.Fuzzy
         /// <value>
         /// choices
         /// </value>
-        [JsonProperty("choices")]
-        public ArrayExpression<string> choices { get; set; } 
+        [JsonProperty("Choices")]
+        public IEnumerable<string> Choices { get; set; } 
 
         public override async Task<RecognizerResult> RecognizeAsync(DialogContext dialogContext, Activity activity, CancellationToken cancellationToken = default, Dictionary<string, string> telemetryProperties = null, Dictionary<string, double> telemetryMetrics = null)
         {
@@ -77,45 +77,43 @@ namespace Bot.Builder.Community.Recognizers.Fuzzy
 
             dynamic entities = recognizerResult.Entities;
 
-            var choices = this.choices.GetValue(dialogContext.State);
+  /*        var choices = this.Choices.GetValue(dialogContext.State);
             var IgnoreNonAlphanumeric = this.IgnoreNonAlphanumeric.GetValue(dialogContext.State);
             var IgnoreCase = this.IgnoreCase.GetValue(dialogContext.State);
             var Threshold = this.Threshold.GetValue(dialogContext.State);
 
             if (choices == null)
-                throw new ArgumentNullException(nameof(choices));
+                throw new ArgumentNullException(nameof(choices));*/
 
-            var options = new FuzzyRecognizerOptions(Threshold, IgnoreCase, IgnoreNonAlphanumeric);
+            var options = new FuzzyRecognizerOptions(this.Threshold, this.IgnoreCase, this.IgnoreNonAlphanumeric);
             var recognizer = new FuzzyRecognizer(options);
-            var result = await recognizer.Recognize(choices, activity.Text);
+            var result = await recognizer.Recognize(this.Choices, activity.Text);
 
             if (result != null)
             {
-
                 entities["$instance"] = new JObject();
  
                 foreach (var match in result.Matches)
                 {
                     // add all ids with exact same start/end
-
+                    entities["$instance"][match.Choice] = new JArray();
                     dynamic instance = new JObject();
                     instance.startIndex = 0;
-                    instance.endIndex = 0;
+                    instance.endIndex = activity.Text.Length - 1;
                     instance.score = match.Score;
-                    instance.text = match.Choice;
+                    instance.text = activity.Text;
                     entities["$instance"][match.Choice].Add(instance);
                 }
             }
 
             // if no match return None intent
-            recognizerResult.Intents.Add("None", new IntentScore() { Score = 1.0 });
+            //recognizerResult.Intents.Add("None", new IntentScore() { Score = 1.0 });
 
-            await dialogContext.Context.TraceActivityAsync(nameof(FuzzyRecognizer), JObject.FromObject(recognizerResult), "RecognizerResult", "FuzzyRecognizerResult", cancellationToken).ConfigureAwait(false);
+            await dialogContext.Context.TraceActivityAsync(nameof(AdaptiveFuzzyRecognizer), JObject.FromObject(recognizerResult), "RecognizerResult", "AdaptiveFuzzyRecognizerResult", cancellationToken).ConfigureAwait(false);
 
-            this.TrackRecognizerResult(dialogContext, "FuzzyRecognizerResult", this.FillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
+            this.TrackRecognizerResult(dialogContext, "AdaptiveFuzzyRecognizerResult", this.FillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
 
             return recognizerResult;
         }
-
     }
 }

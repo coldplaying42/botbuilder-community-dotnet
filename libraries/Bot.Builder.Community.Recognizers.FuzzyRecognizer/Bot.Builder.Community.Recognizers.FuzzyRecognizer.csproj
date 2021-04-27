@@ -15,7 +15,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Bot.Builder" Version="$(Bot_Builder_Version)" />
+    <PackageReference Include="AdaptiveExpressions" Version="4.14.0-daily.20210424.239035.a954ef0" />
+    <PackageReference Include="Microsoft.Bot.Builder" Version="4.14.0-daily.20210424.239035.a954ef0" />
+    <PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.13.0" />
   </ItemGroup>
 
 </Project>

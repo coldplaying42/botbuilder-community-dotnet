@@ -1,4 +1,4 @@
-﻿using Microsoft.Bot.Builder;
+﻿/*using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs.Declarative;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -17,3 +17,4 @@ namespace Bot.Builder.Community.Recognizers.Fuzzy
     }
 }
 
+*/
